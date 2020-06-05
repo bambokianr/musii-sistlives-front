@@ -103,10 +103,6 @@ function LivesForm() {
     e.preventDefault();
     const { artist, genre, date, url, spotify_id } = validInput;
     if(artist === true && genre === true && date === true && url === true && spotify_id === true && uploadedFile.uploaded) {
-      console.log('POST liberado!');
-
-      // const dataToPost = { ...liveData, genre: genreList[parseInt(liveData.genre)] };
-      // console.log(dataToPost);
       
       await axios.post('https://jhh71gbi7j.execute-api.us-east-2.amazonaws.com/production/lives',
       {
@@ -114,7 +110,8 @@ function LivesForm() {
         artist: liveData.artist,
         date: liveData.date,
         url: liveData.url,
-        thumbnail: liveData.thumbnail
+        thumbnail: liveData.thumbnail,
+        track: liveData.spotify_id,
       },
       {
         headers: {
@@ -123,7 +120,7 @@ function LivesForm() {
         },
         crossDomain: true
       }).then(res => {
-        console.log(res);
+        console.log('[success] POST - api lives', res);
 
         setValidInput({});
         setLiveData({
@@ -135,7 +132,7 @@ function LivesForm() {
           track: '',
         });
         setUploadedFile({});
-      }).catch(error => console.log(error));
+      }).catch(error => console.log('[error] POST - api lives', error));
       
     } else alert('[ERRO] Preencha todos os campos corretamente!');
   }
