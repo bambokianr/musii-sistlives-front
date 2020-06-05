@@ -14,7 +14,8 @@ export const ImageBackground = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
 `; 
 
 export const Container = styled.div`
@@ -40,7 +41,7 @@ export const Logo = styled.div`
 
 export const Content = styled.div`
   background: #FFF;
-  margin-top: 20px;
+  margin: 20px 0;
   border-radius: 6px;
   padding: 18px 30px 30px;
 
@@ -80,10 +81,6 @@ export const DatePickerBox = styled.div`
   border-radius: 8px;
   height: 42px;
   ${props => props.validInput === true && validInput};
-  &:focus { 
-    /* NAO TA FUNCIONANDO */
-    border: 1.5px solid #5e076d;
-  }
 
   .react-datepicker__day--selected,
   .react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list li.react-datepicker__time-list-item--selected {

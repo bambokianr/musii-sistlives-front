@@ -108,18 +108,21 @@ function LivesForm() {
       // const dataToPost = { ...liveData, genre: genreList[parseInt(liveData.genre)] };
       // console.log(dataToPost);
       
-      // genre: genreList[parseInt(liveData.genre)],
-      // artist: liveData.artist,
-      // date: liveData.date,
-      // url: liveData.url,
-      // thumbnail: liveData.thumbnail
-      await axios.post('https://lzn2kvn9u6.execute-api.us-east-2.amazonaws.com/dev/lives', 
+      await axios.post('https://jhh71gbi7j.execute-api.us-east-2.amazonaws.com/production/lives',
       {
+        genre: genreList[parseInt(liveData.genre)],
+        artist: liveData.artist,
+        date: liveData.date,
+        url: liveData.url,
+        thumbnail: liveData.thumbnail
       },
-      { headers: 
-        { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" },
-      }
-      ).then(res => {
+      {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        crossDomain: true
+      }).then(res => {
         console.log(res);
 
         setValidInput({});
