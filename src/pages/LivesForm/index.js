@@ -9,11 +9,21 @@ import { ImageBackground, Container, Logo, Content, Input, Select, DescriptionIn
 import logo from '../../assets/logo.svg';
 import Upload from '../../components/Upload';
 import UploadedFile from '../../components/UploadedFile';
-import api from '../../services/api';
+import S3 from 'react-aws-s3';
 import { genreList } from '../../utils/constants';
 import { isURL, isBase62 } from '../../utils/functions';
 
 registerLocale("pt", pt);
+
+const config = {
+  bucketName: process.env.REACT_APP_BUCKET_S3,
+  region: process.env.REACT_APP_AWS_DEFAULT_REGION,
+  accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+  s3Url: process.env.REACT_APP_URL_S3
+}
+
+const ReactS3Client = new S3(config);
 
 function LivesForm() {
   const [validInput, setValidInput] = useState({});
@@ -29,38 +39,35 @@ function LivesForm() {
 
   function handleUpload(file) {
     const fileToUpload = file[0];
+    console.log(fileToUpload);
     const uploadedFile = {
       key: '',
       file: fileToUpload,
       name: fileToUpload.name,
       readableSize: filesize(fileToUpload.size),
       preview: URL.createObjectURL(fileToUpload),
-      progress: 0,
       uploaded: false,
       error: false,
       url: null
     };
     setUploadedFile(uploadedFile);
-    processUpload(uploadedFile);
+    processUpload(fileToUpload, uploadedFile);
   }
 
-  function processUpload(uploadedFile) {
-    const data = new FormData();
-    data.append('file', uploadedFile.file, uploadedFile.name);
-    api.post('post', data, {
-      onUploadProgress: e => {
-        const progress = parseInt(Math.round((e.loaded  * 100) / e.total));
-        setUploadedFile({...uploadedFile, progress});
-      }
-    }).then(response => {
+  function processUpload(fileToUpload, uploadedFile) {
+    ReactS3Client
+    .uploadFile(fileToUpload)
+    .then(data => {
+      console.log('[success] POST - upload at s3 bucket', data);
       setUploadedFile({
         ...uploadedFile,
         uploaded: true,
-        key: response.data.key,
-        url: response.data.url
+        key: data.key,
+        url: data.location
       });
-      setLiveData({...liveData, thumbnail: response.data.url});
-    }).catch(() => {
+      setLiveData({...liveData, thumbnail: data.location});
+    })
+    .catch(() => {
       setUploadedFile({
         ...uploadedFile,
         error: true
@@ -93,7 +100,10 @@ function LivesForm() {
 
   async function handleDeleteFile(file) {
     if (file.uploaded) {
-      await api.delete(`post/${file.key}`);
+      // ReactS3Client
+      // .deleteFile(file.key)
+      // .then(response => console.log(response))
+      // .catch(err => console.error(err));
       setLiveData({...liveData, thumbnail: null });
     } 
     setUploadedFile({});
@@ -102,8 +112,8 @@ function LivesForm() {
   async function handleSubmit(e) {
     e.preventDefault();
     const { artist, genre, date, url, spotify_id } = validInput;
+    
     if(artist === true && genre === true && date === true && url === true && spotify_id === true && uploadedFile.uploaded) {
-      
       await axios.post('https://jhh71gbi7j.execute-api.us-east-2.amazonaws.com/production/lives',
       {
         genre: genreList[parseInt(liveData.genre)],
