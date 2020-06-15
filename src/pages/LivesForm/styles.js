@@ -12,7 +12,7 @@ const invalidInput = css`
 export const ImageBackground = styled.div`
   background: url(${background});
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: cover%;
   background-position: center center;
   min-height: 100vh;
   height: 100%;
@@ -112,7 +112,7 @@ export const SubmitButton = styled.button`
   margin-top: 20px;
   font-size: 16px;
   font-weight: bold;  
-  background: #5e076d;
+  background: ${props => props.confirmButton ? '#78e5d5' : '#5e076d'};
   color: #fff;
   cursor: pointer;
 

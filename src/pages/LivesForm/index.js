@@ -26,6 +26,7 @@ const config = {
 const ReactS3Client = new S3(config);
 
 function LivesForm() {
+  const [confirmButton, setConfirmButton] = useState(false);
   const [validInput, setValidInput] = useState({});
   const [liveData, setLiveData] = useState({
     artist: '',
@@ -114,36 +115,41 @@ function LivesForm() {
     const { artist, genre, date, url, spotify_id } = validInput;
     
     if(artist === true && genre === true && date === true && url === true && spotify_id === true && uploadedFile.uploaded) {
-      await axios.post('https://jhh71gbi7j.execute-api.us-east-2.amazonaws.com/production/lives',
-      {
-        genre: genreList[parseInt(liveData.genre)],
-        artist: liveData.artist,
-        date: liveData.date,
-        url: liveData.url,
-        thumbnail: liveData.thumbnail,
-        track: liveData.spotify_id,
-      },
-      {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+      if(!confirmButton) {
+        setConfirmButton(true);
+        console.log(confirmButton);
+      } else {
+        await axios.post('https://jhh71gbi7j.execute-api.us-east-2.amazonaws.com/production/lives',
+        {
+          genre: genreList[parseInt(liveData.genre)],
+          artist: liveData.artist,
+          date: liveData.date,
+          url: liveData.url,
+          thumbnail: liveData.thumbnail,
+          track: liveData.spotify_id,
         },
-        crossDomain: true
-      }).then(res => {
-        console.log('[success] POST - api lives', res);
+        {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          crossDomain: true
+        }).then(res => {
+          console.log('[success] POST - api lives', res);
 
-        setValidInput({});
-        setLiveData({
-          artist: '',
-          genre: "0",
-          date: new Date(),
-          url: '',
-          spotify_id: '',
-          track: '',
-        });
-        setUploadedFile({});
-      }).catch(error => console.log('[error] POST - api lives', error));
-      
+          setValidInput({});
+          setLiveData({
+            artist: '',
+            genre: "0",
+            date: new Date(),
+            url: '',
+            spotify_id: '',
+            track: '',
+          });
+          setUploadedFile({});
+          setConfirmButton(false);
+        }).catch(error => console.log('[error] POST - api lives', error));
+      }
     } else alert('[ERRO] Preencha todos os campos corretamente!');
   }
 
@@ -213,7 +219,9 @@ function LivesForm() {
               onChange={e => {handleInput(e.target.value, 'spotify_id'); setLiveData({...liveData, track: e.target.value});}}
               onBlur={e => handleInput(e.target.value, 'spotify_id')}              
             />
-            <SubmitButton type="submit">Cadastrar</SubmitButton>
+            <SubmitButton type="submit" confirmButton={confirmButton}>
+              {confirmButton ? "Confirmar" : "Cadastrar"}
+            </SubmitButton>
           </form>
         </Content>
       </Container>
