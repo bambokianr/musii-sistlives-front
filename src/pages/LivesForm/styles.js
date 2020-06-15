@@ -12,7 +12,7 @@ const invalidInput = css`
 export const ImageBackground = styled.div`
   background: url(${background});
   background-repeat: no-repeat;
-  background-size: cover%;
+  background-size: cover;
   background-position: center center;
   min-height: 100vh;
   height: 100%;
