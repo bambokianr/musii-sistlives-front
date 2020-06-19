@@ -1,6 +1,7 @@
 export const genreList = [
   'selecione o gênero correspondente ao artista/grupo...',
   'afrobeat',
+  'arrocha',
   'axé',
   'blues',
   'bossanova',
@@ -27,6 +28,7 @@ export const genreList = [
   'pop',
   'psych-rock',
   'punk',
+  'rap',
   'reggae',
   'reggaeton',
   'rock',
