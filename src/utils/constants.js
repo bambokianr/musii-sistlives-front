@@ -10,6 +10,7 @@ export const genreList = [
   'country',
   'disco',
   'eletronic',
+  'entretenimento',
   'festival',
   'folk',
   'forro',

@@ -90,6 +90,8 @@ function LivesForm() {
         if (arrayTrackId[0] === 'spotify' && arrayTrackId[1] === 'track') {
           isValidInput = isBase62(arrayTrackId[2]);
         }
+      } else if (dataInput.length === 0) {
+        isValidInput = true;
       } else { isValidInput = false; }
     } else if (keyInput === 'date') {
       isValidInput = true;
