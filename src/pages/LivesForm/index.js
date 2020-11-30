@@ -10,7 +10,7 @@ import logo from '../../assets/logo.svg';
 import Upload from '../../components/Upload';
 import UploadedFile from '../../components/UploadedFile';
 import S3 from 'react-aws-s3';
-import { genreList } from '../../utils/constants';
+import { genreList, categoryList } from '../../utils/constants';
 import { isURL, isBase62 } from '../../utils/functions';
 
 registerLocale("pt", pt);
@@ -29,11 +29,12 @@ function LivesForm() {
   const [confirmButton, setConfirmButton] = useState(false);
   const [validInput, setValidInput] = useState({});
   const [liveData, setLiveData] = useState({
+    category: "0",
     artist: '',
     genre: "0",
     date: new Date(),
     url: '',
-    spotify_id: '',
+    // spotify_id: '',
     track: '',
   });
   const [uploadedFile, setUploadedFile] = useState({});
@@ -80,7 +81,7 @@ function LivesForm() {
     let isValidInput = '';
     if (keyInput === 'artist') {
       isValidInput = dataInput.length !== 0;
-    } else if (keyInput === 'genre') {
+    } else if (keyInput === 'category' || keyInput === 'genre') {
       isValidInput = dataInput !== "0";
     } else if (keyInput === 'url') {
       isValidInput = isURL(dataInput);
@@ -114,21 +115,22 @@ function LivesForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const { artist, genre, date, url, spotify_id } = validInput;
+    const { category, artist, genre, date, url } = validInput;
     
-    if(artist === true && genre === true && date === true && url === true && spotify_id === true && uploadedFile.uploaded) {
+    if(category === true && artist === true && genre === true && date === true && url === true && uploadedFile.uploaded) {
       if(!confirmButton) {
         setConfirmButton(true);
         console.log(confirmButton);
       } else {
         await axios.post('https://jhh71gbi7j.execute-api.us-east-2.amazonaws.com/production/lives',
         {
+          category: categoryList[parseInt(liveData.category)],
           genre: genreList[parseInt(liveData.genre)],
           artist: liveData.artist,
           date: liveData.date,
           url: liveData.url,
           thumbnail: liveData.thumbnail,
-          track: liveData.spotify_id,
+          // track: liveData.spotify_id,
         },
         {
           headers: {
@@ -141,11 +143,12 @@ function LivesForm() {
 
           setValidInput({});
           setLiveData({
+            category: "0",
             artist: '',
             genre: "0",
             date: new Date(),
             url: '',
-            spotify_id: '',
+            // spotify_id: '',
             track: '',
           });
           setUploadedFile({});
@@ -157,11 +160,21 @@ function LivesForm() {
 
   return (
     <ImageBackground>
-      <Logo><img src={logo} alt="musii logo" /></Logo>
+      {/* <Logo><img src={logo} alt="musii logo" /></Logo> */}
       <Container>
         <Content>
           <h3>cadastro de lives</h3>
           <form onSubmit={handleSubmit}>
+            <label htmlFor="category">categoria</label>
+            <Select 
+              id="category"
+              validInput={validInput['category']} 
+              onChange={e => handleInput(e.target.value, 'category')} 
+              onBlur={e => handleInput(e.target.value, 'category')} 
+              value={liveData.category}
+            >
+              {categoryList.map((category, idx) => <option key={idx} value={idx}>{category}</option>)}
+            </Select>            
             <label htmlFor="artist">artista ou grupo</label>
             <Input 
               value={liveData.artist}
@@ -210,7 +223,7 @@ function LivesForm() {
               ? <Upload onUpload={handleUpload} />
               : <UploadedFile file={uploadedFile} onDelete={handleDeleteFile} />
             }
-            <label htmlFor="spotify_id">música de divulgação *</label>
+            {/* <label htmlFor="spotify_id">música de divulgação *</label>
             <DescriptionInput>* é possivel obter o <strong>'spotify:track:id-da-musica'</strong> na opção <span>Compartilhar > Copiar URI do Spotify</span></DescriptionInput>
             <Input 
               value={liveData.track}
@@ -220,7 +233,7 @@ function LivesForm() {
               validInput={validInput['spotify_id']} 
               onChange={e => {handleInput(e.target.value, 'spotify_id'); setLiveData({...liveData, track: e.target.value});}}
               onBlur={e => handleInput(e.target.value, 'spotify_id')}              
-            />
+            /> */}
             <SubmitButton type="submit" confirmButton={confirmButton}>
               {confirmButton ? "Confirmar" : "Cadastrar"}
             </SubmitButton>

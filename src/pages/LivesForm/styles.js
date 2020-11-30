@@ -20,6 +20,7 @@ export const ImageBackground = styled.div`
 
 export const Container = styled.div`
   width: 100%;
+  height: 100vh;
   max-width: 600px;
   margin: 0 auto;
   padding: 0 30px;

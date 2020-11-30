@@ -42,3 +42,10 @@ export const genreList = [
   'tango',
   'world-music',
 ];
+
+export const categoryList = [
+  'selecione a categoria...',
+  'podcast',
+  'notícia',
+  'show',
+];
